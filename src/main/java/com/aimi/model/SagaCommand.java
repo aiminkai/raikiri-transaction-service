@@ -8,4 +8,5 @@ public class SagaCommand {
     private String txId;
     private int step;
     private String action; // "execute" или "compensate"
+    private Integer value;
 }

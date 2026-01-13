@@ -27,4 +27,5 @@ public class TransactionEntity {
     private LocalDateTime endedAt;
 
     private String description;
+    private Integer value;
 }

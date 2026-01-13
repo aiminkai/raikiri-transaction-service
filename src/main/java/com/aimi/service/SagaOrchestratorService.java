@@ -29,14 +29,15 @@ public class SagaOrchestratorService {
     }
 
     @Transactional
-    public String startNewTransaction() {
+    public String startNewTransaction(int value) {
         TransactionEntity tx = new TransactionEntity();
         tx.setStatus(TransactionStatus.STARTED);
+        tx.setValue(value);
         tx = txRepo.save(tx);
 
         log.info("Started new saga: {}", tx.getId());
         currentStep.put(tx.getId(), 1);
-        commandProducer.sendExecuteStep(tx.getId(), 1);
+        commandProducer.sendExecuteStep(tx.getId(), 1, value);
 
         return tx.getId();
     }
@@ -52,13 +53,13 @@ public class SagaOrchestratorService {
             tx.setStatus(TransactionStatus.STEP1_DONE);
             txRepo.save(tx);
             currentStep.put(txId, 2);
-            commandProducer.sendExecuteStep(txId, 2);
+            commandProducer.sendExecuteStep(txId, 2, tx.getValue());
 
         } else if (step == 2) {
             tx.setStatus(TransactionStatus.STEP2_DONE);
             txRepo.save(tx);
             currentStep.put(txId, 3);
-            commandProducer.sendExecuteStep(txId, 3);
+            commandProducer.sendExecuteStep(txId, 3, tx.getValue());
 
         } else if (step == 3) {
             tx.setStatus(TransactionStatus.COMPLETED);
@@ -79,7 +80,7 @@ public class SagaOrchestratorService {
 
         // Запускаем компенсацию в обратном порядке
         for (int step = failedStep - 1; step >= 1; step--) {
-            commandProducer.sendCompensateStep(txId, step);
+            commandProducer.sendCompensateStep(txId, step, tx.getValue());
         }
 
         tx.setStatus(TransactionStatus.CANCELLED);

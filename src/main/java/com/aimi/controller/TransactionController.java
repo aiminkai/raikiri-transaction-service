@@ -18,11 +18,11 @@ import java.time.LocalDateTime;
 public class TransactionController {
 
     private final SagaOrchestratorService sagaService;
-    private final TransactionRepository txRepo;
+    private final TransactionRepository txRepo; //нет времени писать сервис, там будет только вызов репозитория
 
     @PostMapping
-    public String startTransaction() {
-        return sagaService.startNewTransaction();
+    public String startTransaction(@RequestParam(defaultValue = "0") int value) {
+        return sagaService.startNewTransaction(value);
     }
 
     @GetMapping
