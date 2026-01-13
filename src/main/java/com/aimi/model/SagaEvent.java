@@ -6,5 +6,6 @@ import lombok.Data;
 public class SagaEvent {
     private String txId;
     private int step;
-    private String status; // "COMPLETED", "FAILED", "COMPENSATED"
+    private String status; // "COMPLETED", "FAILED"
+    private String description;
 }

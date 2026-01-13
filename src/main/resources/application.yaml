@@ -6,7 +6,7 @@ spring:
     name: transaction-service
 
   datasource:
-    url: jdbc:postgresql://localhost:5433/sagaDB
+    url: jdbc:postgresql://localhost:5433/raikiriDB
     username: admin
     password: admin
     driver-class-name: org.postgresql.Driver
@@ -21,7 +21,7 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
   kafka:
-    bootstrap-servers: kafka:9092
+    bootstrap-servers: localhost:9092
     consumer:
       group-id: transaction-service-group
       auto-offset-reset: earliest
