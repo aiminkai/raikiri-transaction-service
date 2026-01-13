@@ -63,6 +63,7 @@ public class SagaOrchestratorService {
         } else if (step == 3) {
             tx.setStatus(TransactionStatus.COMPLETED);
             tx.setEndedAt(LocalDateTime.now());
+            tx.setDescription("Success");
             txRepo.save(tx);
             currentStep.remove(txId);
             log.info("Saga COMPLETED: {}", txId);
@@ -70,7 +71,7 @@ public class SagaOrchestratorService {
     }
 
     @Transactional
-    public void onStepFailed(String txId, int failedStep) {
+    public void onStepFailed(String txId, int failedStep, String errorMessage) {
         TransactionEntity tx = txRepo.findById(txId)
                 .orElseThrow(() -> new RuntimeException("Transaction not found: " + txId));
 
@@ -83,6 +84,7 @@ public class SagaOrchestratorService {
 
         tx.setStatus(TransactionStatus.CANCELLED);
         tx.setEndedAt(LocalDateTime.now());
+        tx.setDescription(errorMessage);
         txRepo.save(tx);
         currentStep.remove(txId);
         log.info("Saga CANCELLED due to step {} failure: {}", failedStep, txId);

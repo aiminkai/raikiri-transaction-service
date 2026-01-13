@@ -9,15 +9,19 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class SagaEventListener {
 
+    private static final String TOPIC = "saga.events";
+    private static final String GROUP = "transaction-service-group";
+    private static final String COMPLETED = "COMPLETED";
+    private static final String FAILED = "FAILED";
+
     private final SagaOrchestratorService orchestrator;
 
-    @KafkaListener(topics = "saga.events", groupId = "transaction-service-group")
+    @KafkaListener(topics = TOPIC, groupId = GROUP)
     public void handleEvent(SagaEvent event) {
-        if ("COMPLETED".equals(event.getStatus())) {
+        if (COMPLETED.equals(event.getStatus())) {
             orchestrator.onStepCompleted(event.getTxId(), event.getStep());
-        } else if ("FAILED".equals(event.getStatus())) {
-            orchestrator.onStepFailed(event.getTxId(), event.getStep());
+        } else if (FAILED.equals(event.getStatus())) {
+            orchestrator.onStepFailed(event.getTxId(), event.getStep(), event.getDescription());
         }
-        // COMPENSATED можно игнорировать — он только для логгирования
     }
 }

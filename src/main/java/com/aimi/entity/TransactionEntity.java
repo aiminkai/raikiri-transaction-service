@@ -25,4 +25,6 @@ public class TransactionEntity {
 
     private LocalDateTime startedAt = LocalDateTime.now();
     private LocalDateTime endedAt;
+
+    private String description;
 }
